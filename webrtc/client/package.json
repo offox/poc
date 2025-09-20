@@ -1,0 +1,13 @@
+{
+  "name": "webrtc-client",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "scripts": {
+    "start": "echo 'Use a static server to serve public folder'",
+    "test": "echo 'No tests specified' && exit 0"
+  }
+}
