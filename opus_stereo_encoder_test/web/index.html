@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Opus Stereo RTP Stream Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background: #0b1b2b;
+      color: #f0f4f8;
+    }
+    button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      background: #1f6feb;
+      color: white;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #6a737d;
+      cursor: not-allowed;
+    }
+    #status {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    audio {
+      margin-top: 1.5rem;
+      width: 100%;
+    }
+    code {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.15rem 0.3rem;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Opus Stereo RTP Stream Test</h1>
+  <p>
+    This page controls the C++ RTP streamer. Click the button to start transmitting Opus over RTP
+    and play back a WAV representation of the same PCM16 source.
+  </p>
+  <button id="start">Start Streaming</button>
+  <div id="status">Idle</div>
+  <audio id="player" controls preload="none"></audio>
+
+  <h2>How it works</h2>
+  <ol>
+    <li>Send a <code>POST /start</code> request to the local server.</li>
+    <li>The server encodes stereo PCM16 into Opus frames and pushes them over RTP.</li>
+    <li>The browser downloads a WAV rendering of the same source for direct playback.</li>
+  </ol>
+
+  <script>
+    const startButton = document.getElementById('start');
+    const status = document.getElementById('status');
+    const player = document.getElementById('player');
+
+    async function startStreaming() {
+      startButton.disabled = true;
+      status.textContent = 'Starting...';
+      try {
+        const response = await fetch('/start', { method: 'POST' });
+        if (!response.ok) {
+          throw new Error('Server returned ' + response.status);
+        }
+        status.textContent = 'Streaming over RTP. Fetching audio preview...';
+        player.src = '/audio?cacheBust=' + Date.now();
+        await player.play();
+        status.textContent = 'RTP streaming active. Playing WAV preview.';
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'Failed to start: ' + err.message;
+        startButton.disabled = false;
+      }
+    }
+
+    startButton.addEventListener('click', startStreaming);
+  </script>
+</body>
+</html>
