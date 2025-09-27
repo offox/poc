@@ -11,13 +11,13 @@ The browser playback is performed without WebRTC — the server simply renders t
 ## Building
 
 ```bash
-mkdir -p build
-cd build
-cmake ..
-make
+conan install . --output-folder=build --build=missing
+cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
+cmake --build build
 ```
 
-> **Note:** You must have `libopus` and `pkg-config` installed on your system.
+The project will automatically consume the `opus/1.4.1` package from Conan. If you prefer to use system packages instead, ensure
+that `libopus` and `pkg-config` are installed and invoke CMake without the Conan toolchain file.
 
 ## Running
 
